@@ -46,6 +46,33 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .home-title p{color:var(--dim);font-size:14px;margin-top:8px;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.6}
 .sun-info{text-align:center;font-size:12px;color:var(--dim);margin-top:6px}
 
+/* JOURNEY FIGURE */
+.journey-figure{position:relative;width:76px;height:76px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(135deg,var(--card),var(--code-bg));border:2px solid var(--border);overflow:visible}
+.journey-figure .jf-img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.15))}
+.journey-figure .jf-label{position:absolute;bottom:-14px;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent);white-space:nowrap;text-align:center}
+.journey-figure .jf-glow{position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 70%);opacity:0;transition:opacity .4s}
+.part-header:not(.locked):hover .jf-glow{opacity:1}
+.part-header:not(.locked) .jf-img{animation:jfFloat 3s ease-in-out infinite}
+.part-header.locked .jf-img{filter:grayscale(.6) opacity(.5)}
+@keyframes jfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* Journey path connector between parts */
+.journey-path{display:flex;justify-content:center;margin:-4px 0;position:relative}
+.journey-path-line{width:2px;height:32px;background:repeating-linear-gradient(to bottom,var(--border) 0,var(--border) 4px,transparent 4px,transparent 8px)}
+.journey-path.done .journey-path-line{background:repeating-linear-gradient(to bottom,var(--green) 0,var(--green) 4px,transparent 4px,transparent 8px)}
+.journey-path .path-walker{position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:14px;animation:pathWalk 2s ease-in-out infinite}
+@keyframes pathWalk{0%,100%{top:4px;opacity:.6}50%{top:18px;opacity:1}}
+
+/* Tile entrance animation */
+.ch-row{opacity:0;transform:translateY(20px)}
+.ch-row.tile-enter{animation:tileEnter .5s forwards}
+@keyframes tileEnter{to{opacity:1;transform:translateY(0)}}
+.ch-row.locked.tile-enter{animation:tileEnterDim .5s forwards}
+@keyframes tileEnterDim{to{opacity:.65;transform:translateY(0)}}
+
+/* Journey stage label on tiles */
+.journey-stage{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-top:4px;opacity:.7}
+
 /* PROGRESS MAP */
 .progress-map{display:flex;justify-content:center;gap:6px;margin:20px 0;flex-wrap:wrap}
 .pm-node{width:44px;height:44px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .2s;border:2px solid var(--border);background:var(--card)}
@@ -57,47 +84,59 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .pm-connector{width:16px;height:2px;background:var(--border);align-self:center;border-radius:1px}
 .pm-connector.done{background:var(--green)}
 
-/* PART HEADERS */
-.part-header{margin-top:28px;margin-bottom:12px;padding:16px 20px;background:linear-gradient(135deg,var(--card),var(--code-bg));border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
-.part-header.locked{opacity:.5}
-.part-header .part-emoji{font-size:28px}
-.part-header .part-info h3{font-size:16px;font-weight:800}
-.part-header .part-info p{font-size:12px;color:var(--dim);margin-top:2px}
-.part-header .part-progress{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent)}
-.part-lock-overlay{position:absolute;right:16px;font-size:20px;opacity:.6}
+/* PART HEADERS — journey section dividers */
+.part-header{margin-top:36px;margin-bottom:16px;padding:20px 24px;background:linear-gradient(135deg,var(--card),var(--code-bg));border:1px solid var(--border);border-radius:18px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}
+.part-header::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(109,40,217,.03),rgba(8,145,178,.03));pointer-events:none}
+.part-header.locked{opacity:.75}
+.part-header .part-emoji{font-size:36px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.1))}
+.part-header .part-info h3{font-size:18px;font-weight:800}
+.part-header .part-info p{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.4}
+.part-header .part-progress{margin-left:auto;font-size:13px;font-weight:700;color:var(--accent);background:var(--code-bg);padding:4px 12px;border-radius:8px}
+.part-lock-overlay{position:absolute;right:16px;font-size:22px;opacity:.6}
 
-/* CHAPTER LIST */
-.ch-list{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.ch-row{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .25s;box-shadow:var(--shadow)}
-.ch-row:hover:not(.locked){border-color:var(--accent);transform:translateX(4px);box-shadow:var(--shadow-hover)}
+/* CHAPTER TILE GRID */
+.ch-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-top:12px}
+.ch-row{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px 14px 18px;cursor:pointer;transition:all .3s cubic-bezier(.25,.8,.25,1);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.ch-row::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent);opacity:.5;transition:opacity .3s}
+.ch-row:hover:not(.locked){border-color:var(--accent);transform:translateY(-6px);box-shadow:var(--shadow-hover)}
+.ch-row:hover:not(.locked)::before{opacity:1}
 .ch-row.done{border-color:var(--green)}
-.ch-row.locked{opacity:.4;cursor:not-allowed}
+.ch-row.done::before{background:var(--green);opacity:.7}
+.ch-row.locked{opacity:.65;cursor:not-allowed}
 .ch-row.locked:hover{transform:none;border-color:var(--border)}
-.ch-row .num{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;background:var(--accent);color:#fff;flex-shrink:0}
+.ch-row .tile-icon{font-size:36px;margin-bottom:8px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1));transition:transform .3s}
+.ch-row:hover:not(.locked) .tile-icon{transform:scale(1.15)}
+.ch-row .num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--accent);color:#fff;flex-shrink:0;margin-bottom:8px}
 .ch-row.done .num{background:var(--green)}
 .ch-row.locked .num{background:var(--dim)}
 .ch-row .info{flex:1;min-width:0}
-.ch-row .info h3{font-size:15px;font-weight:700}
-.ch-row .info p{font-size:12px;color:var(--dim);margin-top:2px;line-height:1.4}
-.ch-row .score{font-size:12px;font-weight:700;color:var(--green)}
-.ch-row .arrow{color:var(--dim);font-size:18px}
-.ch-row .diff{font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:8px;text-transform:uppercase;letter-spacing:.5px}
+.ch-row .info h3{font-size:13px;font-weight:700;line-height:1.3}
+.ch-row .info p{display:none}
+.ch-row .score{font-size:11px;font-weight:700;color:var(--green);margin-top:6px}
+.ch-row .arrow{position:absolute;top:10px;right:10px;color:var(--dim);font-size:14px}
+.ch-row .diff{font-size:8px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
 .diff-standard{background:rgba(5,150,105,.1);color:var(--green)}
 .diff-hard{background:rgba(217,119,6,.1);color:var(--gold)}
 .diff-brutal{background:rgba(220,38,38,.1);color:var(--red)}
+.ch-row .done-check{position:absolute;top:10px;left:10px;width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.ch-row .lock-badge{position:absolute;top:8px;right:8px;font-size:14px;opacity:.6}
 
-/* BOSS BATTLE ROW */
-.ch-row.boss{border:2px solid var(--red);background:linear-gradient(135deg,var(--card),rgba(220,38,38,.04));position:relative}
-.ch-row.boss:hover:not(.locked){border-color:var(--red);box-shadow:0 4px 20px var(--boss-glow)}
-.ch-row.boss .num{background:var(--red);font-size:16px}
+/* BOSS BATTLE TILE */
+.ch-row.boss{border:2px solid var(--red);background:linear-gradient(135deg,var(--card),rgba(220,38,38,.06))}
+.ch-row.boss::before{background:var(--red)}
+.ch-row.boss:hover:not(.locked){border-color:var(--red);box-shadow:0 8px 24px var(--boss-glow);transform:translateY(-6px)}
+.ch-row.boss .num{background:var(--red);font-size:14px}
 .ch-row.boss.done .num{background:var(--green)}
+.ch-row.boss .tile-icon{font-size:40px}
 .boss-label{font-size:9px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:1px}
 
-/* SIDE QUEST ROW */
-.ch-row.side{border:1px dashed var(--gold);background:linear-gradient(135deg,var(--card),rgba(217,119,6,.03))}
-.ch-row.side:hover:not(.locked){border-color:var(--gold);box-shadow:0 4px 20px var(--side-glow)}
-.ch-row.side .num{background:var(--gold);font-size:14px}
+/* SIDE QUEST TILE */
+.ch-row.side{border:1px dashed var(--gold);background:linear-gradient(135deg,var(--card),rgba(217,119,6,.05))}
+.ch-row.side::before{background:var(--gold)}
+.ch-row.side:hover:not(.locked){border-color:var(--gold);box-shadow:0 8px 24px var(--side-glow);transform:translateY(-6px)}
+.ch-row.side .num{background:var(--gold);font-size:12px}
 .ch-row.side.done .num{background:var(--green)}
+.ch-row.side .tile-icon{font-size:32px}
 .side-label{font-size:9px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
 
 /* CHAPTER VIEW */
@@ -160,6 +199,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .q-type-label.ethics{background:rgba(219,39,119,.1);color:var(--pink)}
 .q-type-label.synthesis{background:rgba(217,119,6,.1);color:var(--gold)}
 .q-type-label.data{background:rgba(5,150,105,.1);color:var(--green)}
+.q-type-label.feynman{background:rgba(219,39,119,.1);color:var(--pink)}
+
+/* FEYNMAN ANALOGY */
+.analogy{margin-top:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(219,39,119,.05),rgba(109,40,217,.05));border:1px solid rgba(219,39,119,.2);border-radius:12px;font-size:13px;line-height:1.6;color:var(--text);display:flex;align-items:flex-start;gap:10px}
+.analogy::before{content:'💡';font-size:18px;flex-shrink:0}
+.analogy-label{font-weight:800;color:var(--pink);font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+
+/* FEYNMAN TEACH-BACK */
+.teach-back{margin-top:24px;padding:20px;background:var(--card);border:2px solid var(--pink);border-radius:16px}
+.teach-back h4{font-size:15px;font-weight:800;color:var(--pink);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.teach-back .tb-sub{font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.5}
+.teach-back textarea{width:100%;min-height:80px;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-family:'Inter',sans-serif;font-size:13px;background:var(--code-bg);color:var(--text);resize:vertical;outline:none;transition:border-color .2s;line-height:1.6}
+.teach-back textarea:focus{border-color:var(--pink)}
+.teach-back textarea::placeholder{color:var(--dim);opacity:.7}
+.tb-actions{display:flex;align-items:center;gap:10px;margin-top:10px}
+.tb-save{padding:8px 18px;background:var(--pink);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.tb-save:hover{filter:brightness(1.1)}
+.tb-saved{font-size:12px;color:var(--green);font-weight:600;opacity:0;transition:opacity .3s}
+.tb-saved.show{opacity:1}
+.tb-count{font-size:11px;color:var(--dim);margin-left:auto}
+
+/* FEYNMAN SCORE in stats */
+.feynman-progress{display:flex;align-items:center;gap:6px;margin-top:6px}
+.feynman-bar{flex:1;height:6px;background:var(--code-bg);border-radius:3px;overflow:hidden}
+.feynman-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--accent));border-radius:3px;transition:width .4s}
 
 .q-text{font-size:17px;font-weight:700;margin-bottom:18px;line-height:1.5}
 .q-context{font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:14px;padding:12px 16px;background:var(--code-bg);border-radius:10px;border-left:3px solid var(--cyan)}
@@ -265,7 +329,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .gate-err{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 
-@media(max-width:500px){.home-title h1{font-size:28px}.wrap{padding:16px 12px 40px}.bar{padding:8px 12px}.progress-map{gap:4px}.pm-node{width:36px;height:36px;font-size:14px}}
+@media(max-width:500px){.home-title h1{font-size:28px}.wrap{padding:16px 12px 40px}.bar{padding:8px 12px}.progress-map{gap:4px}.pm-node{width:36px;height:36px;font-size:14px}.ch-list{grid-template-columns:repeat(2,1fr);gap:10px}.ch-row{padding:18px 10px 14px}.ch-row .tile-icon{font-size:30px}.ch-row .info h3{font-size:12px}}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 </style>
 </head>
@@ -274,7 +338,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 <div class="gate" id="gate">
   <div class="gate-box">
     <h1>The Intelligence Revolution</h1>
-    <p>A Field Guide to 2031 &#8212; 25 chapters, 6 boss battles, hard quizzes</p>
+    <p>A Field Guide to 2031 &#8212; 21 chapters, 6 boss battles, hard quizzes</p>
     <input type="password" class="gate-input" id="gatePw" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')checkGate()"/>
     <button class="gate-btn" onclick="checkGate()">Enter the Quest</button>
     <div class="gate-err" id="gateErr"></div>
@@ -332,6 +396,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <h3 id="rTitle"></h3>
         <p class="msg" id="rMsg"></p>
         <div class="xp-bonus" id="rXp"></div>
+        <div id="teachBack"></div>
         <div class="result-btns">
           <button class="rbtn pri" onclick="retryQuiz()">&#128260; Retry</button>
           <button class="rbtn sec" onclick="nextCh()">Next Chapter &#8594;</button>
@@ -433,7 +498,7 @@ function chkBadge(){
   const bossesDone=S.bossesDefeated||[];
   if(chaptersDone.length>=1&&!S.bg.includes('first'))earn.push('first');
   if(chaptersDone.length>=12&&!S.bg.includes('half'))earn.push('half');
-  if(chaptersDone.length>=25&&!S.bg.includes('scholar'))earn.push('scholar');
+  if(chaptersDone.length>=21&&!S.bg.includes('scholar'))earn.push('scholar');
   if(S.str>=3&&!S.bg.includes('s3'))earn.push('s3');
   if(S.str>=5&&!S.bg.includes('s5'))earn.push('s5');
   if(S.str>=10&&!S.bg.includes('s10'))earn.push('s10');
@@ -505,6 +570,21 @@ function renderProgressMap(){
   });
 }
 
+// ===================== CHAPTER ICONS =====================
+const chIcon={1:"📈",2:"💰",3:"🔌",4:"⚡",5:"🧠",7:"👁️",9:"✨",10:"🎭",11:"☣️",13:"🤖",14:"🧬",15:"🤝",16:"💕",17:"⚖️",18:"🌐",19:"🔓",20:"📋",21:"💼",23:"🎯",24:"🔮",25:"🚀"};
+
+// ===================== JOURNEY FIGURES =====================
+// Using Twemoji CDN (Twitter's open source emoji) for high-quality rendered images
+const TW='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/';
+const journeyStage={
+  1:{label:'Prometheus',walker:'🔥',sub:'Stealing fire from the gods',img:TW+'1f525.svg'},
+  2:{label:'Hermes',walker:'⚡',sub:'The messenger takes flight',img:TW+'1fa7c.svg'},
+  3:{label:'Ares',walker:'⚔️',sub:'Into the arena of shadows',img:TW+'2694.svg'},
+  4:{label:'Athena',walker:'🦉',sub:'Wisdom lights the way',img:TW+'1f989.svg'},
+  5:{label:'Atlas',walker:'🌍',sub:'Bearing the weight of worlds',img:TW+'1f30d.svg'},
+  6:{label:'Apollo',walker:'☀️',sub:'The oracle sees all',img:TW+'2600.svg'}
+};
+
 // ===================== HOME =====================
 function goHome(){
   document.getElementById('vHome').style.display='block';
@@ -515,16 +595,30 @@ function goHome(){
 function renderHome(){
   renderProgressMap();
   const el=document.getElementById('chListAll');el.innerHTML='';
-  parts.forEach(p=>{
+  let tileDelay=0;
+  parts.forEach((p,pi)=>{
     const unlocked=isPartUnlocked(p.id);
     const partChs=chapters.filter(c=>c.part===p.id&&!c.boss&&!c.side);
     const doneCt=partChs.filter(c=>S.done.includes(c.id)).length;
+    const bossId='boss_'+p.id;
+    const bossDefeated=(S.bossesDefeated||[]).includes(bossId);
+    const stage=journeyStage[p.id];
 
-    // Part header
+    // Journey path connector between parts
+    if(pi>0){
+      const prevBoss='boss_'+parts[pi-1].id;
+      const prevDone=(S.bossesDefeated||[]).includes(prevBoss);
+      const path=document.createElement('div');
+      path.className='journey-path'+(prevDone?' done':'');
+      path.innerHTML=`<div class="journey-path-line"></div>${prevDone?'<div class="path-walker">'+stage.walker+'</div>':''}`;
+      el.appendChild(path);
+    }
+
+    // Part header with journey figure
     const hdr=document.createElement('div');
     hdr.className='part-header'+(unlocked?'':' locked');
     hdr.dataset.part=p.id;
-    hdr.innerHTML=`<div class="part-emoji">${p.emoji}</div><div class="part-info"><h3>Part ${p.id}: ${p.t}</h3><p>${p.d}</p></div><div class="part-progress">${doneCt}/${partChs.length}</div>${unlocked?'':'<div class="part-lock-overlay">&#128274;</div>'}`;
+    hdr.innerHTML=`<div class="journey-figure"><div class="jf-glow"></div><img class="jf-img" src="${stage.img}" alt="${stage.label}"/><div class="jf-label">${stage.label}</div></div><div class="part-info"><h3>Part ${p.id}: ${p.t}</h3><p>${stage.sub}</p></div><div class="part-progress">${doneCt}/${partChs.length}</div>${unlocked?'':'<div class="part-lock-overlay">&#128274;</div>'}`;
     el.appendChild(hdr);
 
     // Chapter list for this part
@@ -538,8 +632,11 @@ function renderHome(){
       const sc=S.sc[ch.id];
       const r=document.createElement('div');
       r.className='ch-row'+(done?' done':'')+(locked?' locked':'');
+      r.style.animationDelay=(tileDelay*80)+'ms';
+      tileDelay++;
       const diff=ch.difficulty||'standard';
-      r.innerHTML=`<div class="num">${ch.n}</div><div class="info"><h3>${ch.t}</h3><p>${ch.d}</p></div>${sc!=null?'<div class="score">'+sc+'%</div>':''}<span class="diff diff-${diff}">${diff}</span><div class="arrow">${locked?'&#128274;':(done?'&#10003;':'&#8250;')}</div>`;
+      const icon=chIcon[ch.id]||'📖';
+      r.innerHTML=`${done?'<div class="done-check">✓</div>':''}${locked?'<div class="lock-badge">🔒</div>':''}<div class="tile-icon">${icon}</div><div class="num">${ch.n}</div><div class="info"><h3>${ch.t}</h3></div>${sc!=null?'<div class="score">'+sc+'%</div>':''}<span class="diff diff-${diff}">${diff}</span>`;
       if(!locked)r.onclick=()=>openCh(ch.id);
       list.appendChild(r);
     });
@@ -552,7 +649,9 @@ function renderHome(){
       const sc=S.sc[sq.id];
       const r=document.createElement('div');
       r.className='ch-row side'+(done?' done':'')+(locked?' locked':'');
-      r.innerHTML=`<div class="num">&#9733;</div><div class="info"><div class="side-label">Side Quest</div><h3>${sq.t}</h3><p>${sq.d}</p></div>${sc!=null?'<div class="score">'+sc+'%</div>':''}<div class="arrow">${locked?'&#128274;':(done?'&#10003;':'&#8250;')}</div>`;
+      r.style.animationDelay=(tileDelay*80)+'ms';
+      tileDelay++;
+      r.innerHTML=`${done?'<div class="done-check">✓</div>':''}${locked?'<div class="lock-badge">🔒</div>':''}<div class="tile-icon">🗝️</div><div class="num">★</div><div class="info"><div class="side-label">Side Quest</div><h3>${sq.t}</h3></div>${sc!=null?'<div class="score">'+sc+'%</div>':''}`;
       if(!locked)r.onclick=()=>openCh(sq.id);
       list.appendChild(r);
     });
@@ -565,11 +664,18 @@ function renderHome(){
       const sc=S.sc[boss.bossId];
       const r=document.createElement('div');
       r.className='ch-row boss'+(bossDefeated?' done':(!bossUnlocked?' locked':''));
-      r.innerHTML=`<div class="num">${bossDefeated?'&#10003;':'&#9760;'}</div><div class="info"><div class="boss-label">&#9760; Boss Battle</div><h3>${boss.t}</h3><p>${boss.d}</p></div>${sc!=null?'<div class="score">'+sc+'%</div>':''}<div class="arrow">${!bossUnlocked?'&#128274;':(bossDefeated?'&#10003;':'&#9876;')}</div>`;
+      r.style.animationDelay=(tileDelay*80)+'ms';
+      tileDelay++;
+      r.innerHTML=`${bossDefeated?'<div class="done-check">✓</div>':''}${!bossUnlocked?'<div class="lock-badge">🔒</div>':''}<div class="tile-icon">${bossDefeated?'💀':'👹'}</div><div class="num">${bossDefeated?'✓':'☠'}</div><div class="info"><div class="boss-label">⚔️ Boss Battle</div><h3>${boss.t}</h3></div>${sc!=null?'<div class="score">'+sc+'%</div>':''}`;
       if(bossUnlocked)r.onclick=()=>openBoss(boss);
       list.appendChild(r);
     }
     el.appendChild(list);
+  });
+
+  // Trigger tile entrance animations
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.ch-row').forEach(t=>t.classList.add('tile-enter'));
   });
 
   // Stats
@@ -583,14 +689,24 @@ function renderStats(){
   const chDone=S.done.filter(id=>typeof id==='number').length;
   const bossDone=(S.bossesDefeated||[]).length;
   const rk=getRank(S.totalXp);
+  const tbCount=getTeachBackCount();
+  const totalChs=chapters.filter(c=>!c.boss&&!c.side).length;
   el.innerHTML=`<div class="stats-footer"><h3>&#128200; Your Stats</h3><div class="stats-grid">
-    <div class="stat-item"><div class="sv">${chDone}/25</div><div class="sl">Chapters</div></div>
+    <div class="stat-item"><div class="sv">${chDone}/${totalChs}</div><div class="sl">Chapters</div></div>
     <div class="stat-item"><div class="sv">${bossDone}/6</div><div class="sl">Bosses</div></div>
     <div class="stat-item"><div class="sv">${S.totalXp}</div><div class="sl">Total XP</div></div>
     <div class="stat-item"><div class="sv">${S.lv}</div><div class="sl">Level</div></div>
     <div class="stat-item"><div class="sv">${S.str}</div><div class="sl">Streak</div></div>
     <div class="stat-item"><div class="sv">${rk.n}</div><div class="sl">Rank</div></div>
-  </div></div>`;
+  </div>
+  <div style="margin-top:14px;padding:12px 16px;background:var(--code-bg);border-radius:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:12px;font-weight:700;color:var(--pink)">&#128161; Feynman Mastery</span>
+      <span style="font-size:12px;color:var(--dim)">${tbCount}/${totalChs} chapters explained</span>
+    </div>
+    <div class="feynman-bar"><div class="feynman-fill" style="width:${Math.round(tbCount/totalChs*100)}%"></div></div>
+  </div>
+  </div>`;
 }
 
 function renderBadgeShelf(){
@@ -605,9 +721,9 @@ function renderBadgeShelf(){
 
 function renderPdfBanner(){
   const banner=document.getElementById('pdfBanner');
-  const allDone=S.done.filter(id=>typeof id==='number').length>=25;
+  const allDone=S.done.filter(id=>typeof id==='number').length>=21;
   if(allDone){
-    banner.innerHTML='<div class="pdf-home-banner"><h3>&#127891; Congratulations, Sovereign!</h3><p>You have mastered all 25 chapters and defeated all 6 bosses. Download your reference.</p><button class="pdf-btn" onclick="generatePDF()">&#128214; Download Summary PDF</button></div>';
+    banner.innerHTML='<div class="pdf-home-banner"><h3>&#127891; Congratulations, Sovereign!</h3><p>You have mastered all 21 chapters and defeated all 6 bosses. Download your reference.</p><button class="pdf-btn" onclick="generatePDF()">&#128214; Download Summary PDF</button></div>';
   }else{banner.innerHTML=''}
 }
 
@@ -641,7 +757,8 @@ function openCh(id){
     if(c.stats){
       bodyHtml+='<div class="data-callout">'+c.stats.map(s=>`<div class="dc"><div class="dc-num">${s.v}</div><div class="dc-label">${s.l}</div></div>`).join('')+'</div>';
     }
-    d.innerHTML=`<div class="s-num">Concept ${i+1} of ${cur.concepts.length}</div><h4>${c.t}</h4><div class="hook">${c.h}</div><div class="body">${bodyHtml}</div><div class="detail">${c.x}</div><span class="expand-btn" onclick="event.stopPropagation();this.parentElement.classList.toggle('open');this.textContent=this.parentElement.classList.contains('open')?'Show less ▲':'Dig deeper ▼'">Dig deeper ▼</span>`;
+    const analogyHtml=c.a?`<div class="analogy"><div><div class="analogy-label">Feynman Analogy</div>${c.a}</div></div>`:'';
+    d.innerHTML=`<div class="s-num">Concept ${i+1} of ${cur.concepts.length}</div><h4>${c.t}</h4><div class="hook">${c.h}</div><div class="body">${bodyHtml}</div>${analogyHtml}<div class="detail">${c.x}</div><span class="expand-btn" onclick="event.stopPropagation();this.parentElement.classList.toggle('open');this.textContent=this.parentElement.classList.contains('open')?'Show less ▲':'Dig deeper ▼'">Dig deeper ▼</span>`;
     document.getElementById('steps').appendChild(d);
   });
   updProgress();setTimeout(()=>revealStep(0),100);window.scrollTo(0,0);
@@ -729,7 +846,7 @@ function renderQ(){
   // Type label
   const typeEl=document.getElementById('qTypeLabel');
   if(q.type){
-    const labels={scenario:'&#127758; Scenario',flaw:'&#128269; Find the Flaw',prediction:'&#128302; Prediction',ethics:'&#9878; Ethics',synthesis:'&#128161; Synthesis',data:'&#128200; Data Analysis'};
+    const labels={scenario:'&#127758; Scenario',flaw:'&#128269; Find the Flaw',prediction:'&#128302; Prediction',ethics:'&#9878; Ethics',synthesis:'&#128161; Synthesis',data:'&#128200; Data Analysis',feynman:'&#128161; Feynman'};
     typeEl.innerHTML=`<span class="q-type-label ${q.type}">${labels[q.type]||q.type}</span>`;
   }else{typeEl.innerHTML=''}
   // Context block
@@ -808,6 +925,7 @@ function showRes(){
   if(elapsed<30&&!S.bg.includes('speed')){S.bg.push('speed');setTimeout(()=>showToast('speed'),1000)}
   document.getElementById('tFill').style.width='100%';
   save();chkBadge();updBar();
+  renderTeachBack();
 }
 
 function retryQuiz(){startQuiz()}
@@ -835,7 +953,7 @@ function generatePDF(){
   doc.setFontSize(16);doc.setTextColor(8,145,178);
   doc.text('A Field Guide to 2031',pw/2,95,{align:'center'});
   doc.setFontSize(11);doc.setTextColor(120,120,120);
-  doc.text('25 Chapters \u2022 6 Boss Battles \u2022 Complete Summary',pw/2,110,{align:'center'});
+  doc.text('21 Chapters \u2022 6 Boss Battles \u2022 Complete Summary',pw/2,110,{align:'center'});
   const regularChs=chapters.filter(c=>!c.boss&&!c.side);
   regularChs.forEach(ch=>{
     doc.addPage();y=mt;
@@ -865,6 +983,40 @@ function generatePDF(){
     doc.text('Page '+(i-1),pw-mr,ph-10,{align:'right'});
   }
   doc.save('Intelligence_Revolution_2031.pdf');
+}
+
+// ===================== FEYNMAN TEACH-BACK =====================
+function getTeachBacks(){try{return JSON.parse(localStorage.getItem('aiq_tb')||'{}')}catch(e){return{}}}
+function saveTeachBack(chId,text){const tb=getTeachBacks();tb[chId]=text;localStorage.setItem('aiq_tb',JSON.stringify(tb))}
+function getTeachBackCount(){return Object.keys(getTeachBacks()).filter(k=>getTeachBacks()[k].trim().length>0).length}
+
+function renderTeachBack(){
+  const el=document.getElementById('teachBack');
+  if(!cur||cur._isBoss){el.innerHTML='';return}
+  const chId=cur.id;
+  const existing=getTeachBacks()[chId]||'';
+  const charCount=existing.length;
+  el.innerHTML=`<div class="teach-back">
+    <h4>&#128161; Feynman Challenge</h4>
+    <div class="tb-sub">Explain this chapter's core insight to a smart non-expert in 2-3 sentences. No jargon. If you can't simplify it, you haven't mastered it.</div>
+    <textarea id="tbText" placeholder="In plain English, the key insight of this chapter is...">${existing.replace(/</g,'&lt;')}</textarea>
+    <div class="tb-actions">
+      <button class="tb-save" onclick="doSaveTeachBack()">Save</button>
+      <span class="tb-saved" id="tbSaved">&#10003; Saved</span>
+      <span class="tb-count" id="tbCount">${charCount} chars</span>
+    </div>
+  </div>`;
+  const ta=document.getElementById('tbText');
+  ta.addEventListener('input',()=>{document.getElementById('tbCount').textContent=ta.value.length+' chars'});
+}
+
+function doSaveTeachBack(){
+  const text=document.getElementById('tbText').value;
+  saveTeachBack(cur.id,text);
+  const saved=document.getElementById('tbSaved');
+  saved.classList.add('show');
+  setTimeout(()=>saved.classList.remove('show'),2000);
+  if(text.trim().length>=20)addXp(10);
 }
 
 // ===================== GATE =====================
