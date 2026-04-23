@@ -421,7 +421,11 @@ function getLocalTime(){
 }
 function isDaytime(){const h=getLocalTime().getHours();return h>=7&&h<19}
 
-let themeOverride=localStorage.getItem('aiq_theme')||null;
+// Sync theme from main onboarding page
+let themeOverride=(function(){
+  try{const g=JSON.parse(localStorage.getItem('ril_onboarding_theme'));if(g&&g.override)return g.light?'light':'dark';}catch(e){}
+  return localStorage.getItem('aiq_theme')||null;
+})();
 
 function applyTheme(){
   let dark;
@@ -437,11 +441,20 @@ function applyTheme(){
   if(info)info.textContent=`India ${h}:${m} ${mode}`;
 }
 
+function syncThemeToOnboarding(){
+  if(themeOverride){
+    localStorage.setItem('ril_onboarding_theme',JSON.stringify({override:true,light:themeOverride==='light'}));
+  } else {
+    localStorage.removeItem('ril_onboarding_theme');
+  }
+}
+
 function toggleTheme(){
   if(!themeOverride)themeOverride='dark';
   else if(themeOverride==='dark')themeOverride='light';
   else{themeOverride=null;localStorage.removeItem('aiq_theme')}
   if(themeOverride)localStorage.setItem('aiq_theme',themeOverride);
+  syncThemeToOnboarding();
   applyTheme();
 }
 
@@ -1044,6 +1057,47 @@ applyTheme();
 if(localStorage.getItem(_gk)==='1'){unlockApp();}else{document.getElementById('gatePw').focus();}
 load();updBar();renderHome();
 setInterval(applyTheme,60000);
+
+/* __QUEST_DEV_UNLOCK_v1__ */
+// Escape hatch: ?dev=1 unlocks all progression; ?dev=reset clears localStorage;
+// typing "unlock" anywhere redirects to ?dev=1. Safe even if globals missing.
+(function(){
+  try {
+    const params = new URLSearchParams(location.search);
+    if (params.get('dev') === 'reset') { localStorage.clear(); location.href = location.pathname; return; }
+    if (params.get('dev') === '1') {
+      Object.keys(localStorage).forEach(k => { if (/auth|gate|pw/i.test(k)) localStorage.removeItem(k); });
+      setTimeout(function(){
+        try {
+          if (typeof S === 'object' && S) {
+            if (!S.done) S.done = [];
+            if (!S.bossesDefeated) S.bossesDefeated = [];
+            if (typeof chapters !== 'undefined' && Array.isArray(chapters)) {
+              chapters.filter(Boolean).forEach(c => {
+                if (c.boss || c.bossId) {
+                  const bid = c.bossId || ('boss_' + c.part);
+                  if (!S.bossesDefeated.includes(bid)) S.bossesDefeated.push(bid);
+                } else if (!c.side && c.id != null && !S.done.includes(c.id)) {
+                  S.done.push(c.id);
+                }
+              });
+            }
+            if (typeof save === 'function') save();
+            if (typeof renderHome === 'function') renderHome();
+            if (typeof updBar === 'function') updBar();
+          }
+          console.warn('DEV UNLOCK active.');
+        } catch(e) { console.warn('dev unlock partial:', e); }
+      }, 300);
+    }
+    let buf = '';
+    addEventListener('keydown', e => {
+      buf = (buf + (e.key || '')).slice(-6);
+      if (buf === 'unlock') location.href = location.pathname + '?dev=1';
+    });
+  } catch(e) { console.warn('dev unlock init failed:', e); }
+})();
+
 </script>
 </body>
 </html>
